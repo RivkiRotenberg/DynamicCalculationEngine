@@ -1,9 +1,10 @@
-
---Comparison between methods for each formula was performed 
---using Dynamic Pivot SQL to ensure scalability and adaptability for any future updates.
+﻿
+--בוצעה השוואה בין השיטות עבור כל נוסחה
+-- כדי להבטיח גמישות והתאמה לכל עדכון עתידי DINAMIC PIBOT SQL תוך שימוש ב
 
 DECLARE @DynamicPivotQuery AS NVARCHAR(MAX)
 DECLARE @ColumnName AS NVARCHAR(MAX)
+
 
 SELECT @ColumnName = ISNULL(@ColumnName + ',','')+QUOTENAME(method)
 FROM (SELECT DISTINCT method FROM t_results) AS Methods
