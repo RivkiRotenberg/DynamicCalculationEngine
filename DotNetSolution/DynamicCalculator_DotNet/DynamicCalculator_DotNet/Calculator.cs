@@ -1,55 +1,87 @@
-﻿using System;
+﻿using NCalc;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using NCalc;
+using System.Xml.Linq;
 
 namespace DynamicCalculator_DotNet
 {
     internal class Calculator
     {
 
+
         private DataTable _helperTable = new DataTable();
 
-        //Calculation with DataTable.compute library
-        public float Evaluate(string formula,float a,float b,float c,float d)
+
+
+        //פונצקיה שמחליפה את הפרמטרים שהתקבלו לערכים
+        private string PrepareFormula(string formula, float a, float b, float c, float d)
         {
-            string processed = formula.Replace("a", a.ToString())
-                                      .Replace("b", b.ToString())
-                                      .Replace("c", c.ToString())
-                                      .Replace("d", d.ToString());
-
-            if (processed.Contains("sqrt"))
-            {
-                return (float)Math.Sqrt((c*c)+(d*d));
-            }
-            if (processed.Contains("pow"))
-            {
-                return (float)Math.Pow(a, b);
-            }
-
-            DataTable dt = new DataTable();
-            return Convert.ToSingle(dt.Compute(processed, ""));
+            return formula.Replace("a", a.ToString("G"))
+                          .Replace("b", b.ToString("G"))
+                          .Replace("c", c.ToString("G"))
+                          .Replace("d", d.ToString("G"));
         }
 
-        //Calculation with NCalc library
-        public float EvaluateCalculator(string formula,float a,float b ,float c ,float d)
+        //Calculation with DataTable.compute library
+        public float Evaluate( string formulaTrue,string condition,string formulaFalse,float a,float b,float c,float d)
         {
             try
             {
-                NCalc.Expression e = new NCalc.Expression(formula);
-                e.Parameters["a"] = a;
-                e.Parameters["b"] = b;
-                e.Parameters["c"] = c;
-                e.Parameters["d"] = d;
+                string chosenFormula = formulaTrue;
 
-                var result = e.Evaluate();
-                return Convert.ToSingle(result);
+                if(!string.IsNullOrEmpty(condition) && condition.ToUpper() != "NULL")
+                {
+                    string processedCode = PrepareFormula(condition, a, b, c, d).Replace("==", "=");
+                    bool isTrue = Convert.ToBoolean(_helperTable.Compute(processedCode, ""));
+                    chosenFormula = isTrue ? formulaTrue : formulaFalse;
+                }
+                
+                if(chosenFormula.Contains("sqrt") ) return (float)Math.Sqrt((c*c) +(d*d));
+                if (chosenFormula.Contains("pow")) return (float)Math.Pow(a, b);
 
-              
+                string processedFinal = PrepareFormula(chosenFormula, a, b, c, d);
+                return Convert.ToSingle(_helperTable.Compute(chosenFormula, ""));
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return 0;
+            }
+        }
+
+        //Calculation with NCalc library 
+        public float EvaluateNCalc(string formulaTrue,string condition,string formulaFalse,float a,float b ,float c ,float d)
+        {
+            try
+            {
+                string chosenFormula = formulaTrue;
+
+                if (!string.IsNullOrEmpty(condition) && condition.ToUpper() != "NULL")
+                {
+                    NCalc.Expression eCode = new NCalc.Expression(condition);
+                    eCode.Parameters["a"] = a;
+                    eCode.Parameters["b"] = b;
+                    eCode.Parameters["c"] = c;
+                    eCode.Parameters["d"] = d;
+
+                    bool isTrue = Convert.ToBoolean(eCode.Evaluate());
+                    chosenFormula = isTrue ? formulaTrue : formulaFalse;
+                }
+                    if (string.IsNullOrEmpty(chosenFormula) || chosenFormula.ToUpper() == "NULL")
+                    return 0;
+
+                NCalc.Expression eCalc = new NCalc.Expression(chosenFormula);
+                eCalc.Parameters["a"] = a;
+                eCalc.Parameters["b"] = b;
+                eCalc.Parameters["c"] = c;
+                eCalc.Parameters["d"] = d;
+                return Convert.ToSingle(eCalc.Evaluate());
 
             }
             catch (Exception ex)
@@ -58,6 +90,7 @@ namespace DynamicCalculator_DotNet
                 return 0;
             }
         }
+       
 
     }
 }
