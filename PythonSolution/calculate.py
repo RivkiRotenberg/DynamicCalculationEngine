@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-#פונצקיה לחישוב הנוסחא
+#פונצקיה לחישוב הנוסחה
 def calculate_formula(df,formula,condition=None,formula_false=None):
 
 
