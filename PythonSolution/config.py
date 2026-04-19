@@ -1,3 +1,4 @@
+#הגדרת נתוני מסד נתונים
 DB_CONFIG =  {
     'driver':'{ODBC Driver 17 for SQL Server}',
     'server':'.',

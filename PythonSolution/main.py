@@ -4,6 +4,7 @@ import time
 from calculate import calculate_formula
 import pyodbc
 
+# חיבור למסד הנתונים
 def get_sql_connection():
     conn_str = (
         f"DRIVER={DB_CONFIG['driver']};"
@@ -25,6 +26,8 @@ def run_calculation_process():
         df_formulas = pd.read_sql_query("SELECT targil_id,targil,tnai,targil_false FROM t_targil",conn)
         print(f"find {len(df_formulas)} formulas")
 
+        #ריצה על טבלת הנוסחאות
+
         for _, row in df_formulas.iterrows():
             t_id = row['targil_id']
             formula = row['targil']
@@ -34,11 +37,14 @@ def run_calculation_process():
             print(f"calculate {formula} ")
             start_time = time.time()
             try:
+                #חישוב התוצאה של הנוסחה
                 results = calculate_formula(df_data, formula,condition,formula_false)
                 end_time = time.time()
+                #חישוב זמן ריצה של הנוסחה
                 duration = end_time - start_time
 
                 values_to_insert = []
+                #שמירה והכנסת התוצאות לטבלת t_results
                 for idx, res_val in enumerate(results):
                     values_to_insert.append(
                         (
@@ -52,7 +58,7 @@ def run_calculation_process():
                 cursor.executemany(
                     'INSERT INTO t_results (data_id,targil_id,method,result) VALUES (?,?,?,?)', values_to_insert
                 )
-
+                #הכנסת התוצאות לטבלת t_log
                 cursor.execute(
                     "INSERT INTO t_log (targil_id,method,run_time) VALUES (?,?,?)",
                     (t_id,'python',duration)
