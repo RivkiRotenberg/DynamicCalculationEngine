@@ -1,5 +1,6 @@
 ﻿-- זיהוי אי תאימות בין הנוסחאות 
-
+use DynamicDB
+go
 SELECT DISTINCT
 	t.targil AS [Formula],
 	r1.data_id,
