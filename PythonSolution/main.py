@@ -22,17 +22,19 @@ def run_calculation_process():
         print("give data")
         df_data = pd.read_sql_query("SELECT data_id, a,b,c,d FROM t_data",conn)
 
-        df_formulas = pd.read_sql_query("SELECT targil_id,targil FROM t_targil",conn)
+        df_formulas = pd.read_sql_query("SELECT targil_id,targil,tnai,targil_false FROM t_targil",conn)
         print(f"find {len(df_formulas)} formulas")
 
         for _, row in df_formulas.iterrows():
             t_id = row['targil_id']
             formula = row['targil']
+            condition = row['tnai']
+            formula_false = row['targil_false']
 
-            print(f"calculate {formula}")
+            print(f"calculate {formula} ")
             start_time = time.time()
             try:
-                results = calculate_formula(df_data, formula)
+                results = calculate_formula(df_data, formula,condition,formula_false)
                 end_time = time.time()
                 duration = end_time - start_time
 
