@@ -55,7 +55,7 @@ namespace DynamicCalculator_DotNet
                         //float result = calc.Evaluate(formulaStr,condition,formulaFalse, a, b, c, d);
                         float result = calc.EvaluateNCalc(formulaStr,condition,formulaFalse, a, b, c, d);
 
-                        Console.WriteLine($"A:{a:F2} | B:{b:F2} | C:{c:F2} | D:{d:F2} => Result: {result:F2}");
+                      //  Console.WriteLine($"A:{a:F2} | B:{b:F2} | C:{c:F2} | D:{d:F2} => Result: {result:F2}");
                         //t_result שמירת התוצאה לטבלת  
                         dbManager.SaveResult(dataId,id,"DotNet",result);
 

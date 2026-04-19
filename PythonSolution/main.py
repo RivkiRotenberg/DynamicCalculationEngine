@@ -34,7 +34,7 @@ def run_calculation_process():
             condition = row['tnai']
             formula_false = row['targil_false']
 
-            print(f"calculate {formula} ")
+           # print(f"calculate {formula} ")
             start_time = time.time()
             try:
                 #חישוב התוצאה של הנוסחה
@@ -65,7 +65,7 @@ def run_calculation_process():
 
                 )
                 conn.commit()
-                print(f" formula {formula} is done in {duration} seconds")
+                #print(f" formula {formula} is done in {duration} seconds")
 
             except Exception as e:
                 print(f" error in {formula}: {e}")
