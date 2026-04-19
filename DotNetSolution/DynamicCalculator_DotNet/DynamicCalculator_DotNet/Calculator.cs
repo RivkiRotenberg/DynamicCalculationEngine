@@ -34,17 +34,20 @@ namespace DynamicCalculator_DotNet
             try
             {
                 string chosenFormula = formulaTrue;
-
+                
+                //בדיקה האם קיים תנאי
+                
                 if(!string.IsNullOrEmpty(condition) && condition.ToUpper() != "NULL")
                 {
                     string processedCode = PrepareFormula(condition, a, b, c, d).Replace("==", "=");
+                    //בדיקה אם התנאי נכון או לא 
                     bool isTrue = Convert.ToBoolean(_helperTable.Compute(processedCode, ""));
                     chosenFormula = isTrue ? formulaTrue : formulaFalse;
                 }
                 
                 if(chosenFormula.Contains("sqrt") ) return (float)Math.Sqrt((c*c) +(d*d));
                 if (chosenFormula.Contains("pow")) return (float)Math.Pow(a, b);
-
+                //חישוב הנוסחה הסופית 
                 string processedFinal = PrepareFormula(chosenFormula, a, b, c, d);
                 return Convert.ToSingle(_helperTable.Compute(chosenFormula, ""));
             }
@@ -61,7 +64,7 @@ namespace DynamicCalculator_DotNet
             try
             {
                 string chosenFormula = formulaTrue;
-
+                //בדיקה האם קיים תנאי
                 if (!string.IsNullOrEmpty(condition) && condition.ToUpper() != "NULL")
                 {
                     NCalc.Expression eCode = new NCalc.Expression(condition);
@@ -69,13 +72,14 @@ namespace DynamicCalculator_DotNet
                     eCode.Parameters["b"] = b;
                     eCode.Parameters["c"] = c;
                     eCode.Parameters["d"] = d;
-
+                    //בדיקה אם התנאי נכון או לא
                     bool isTrue = Convert.ToBoolean(eCode.Evaluate());
                     chosenFormula = isTrue ? formulaTrue : formulaFalse;
                 }
                     if (string.IsNullOrEmpty(chosenFormula) || chosenFormula.ToUpper() == "NULL")
                     return 0;
 
+                //חישוב הנוסחה הסופית
                 NCalc.Expression eCalc = new NCalc.Expression(chosenFormula);
                 eCalc.Parameters["a"] = a;
                 eCalc.Parameters["b"] = b;

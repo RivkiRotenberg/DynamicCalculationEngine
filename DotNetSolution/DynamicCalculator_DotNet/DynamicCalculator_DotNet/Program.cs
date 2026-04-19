@@ -18,15 +18,11 @@ namespace DynamicCalculator_DotNet
             Calculator calc = new Calculator();
 
             Console.WriteLine("---Start filling in data---");
-            //Stopwatch sw = new Stopwatch();
-            //sw.Start();
+            
 
             try
             {
-                //dbManager.SeedDatabase();
-                //sw.Stop();
-
-                //Console.WriteLine($"A million records were entered in {sw.Elapsed.TotalSeconds:F2} seconds successfully!");
+                
                 Console.WriteLine("\n--- starting calculation phase ---");
 
                 DataTable formulas = dbManager.GetFormulas();
@@ -39,25 +35,28 @@ namespace DynamicCalculator_DotNet
                 {
                     int id = Convert.ToInt32(formulaRow["targil_id"]);
 
+                    //שליפת נתוני הנוסחאות מהטבלה
                     string formulaStr = formulaRow["targil"].ToString();
                     string condition = formulaRow["tnai"]?.ToString() ?? "NULL";
                     string formulaFalse = formulaRow["targil_false"]?.ToString() ?? "NULL";
 
-                    Console.WriteLine($"Processing formula: {formulaStr}");
                     Stopwatch swCalc = Stopwatch.StartNew();
 
                     foreach (DataRow row in data.Rows)
                     {
+                        //שליפת נתוני המשתנים מהטבלה
                         int dataId = Convert.ToInt32(row["data_id"]);
                         float a = Convert.ToSingle(row["a"]);
                         float b = Convert.ToSingle(row["b"]);
                         float c = Convert.ToSingle(row["c"]);
                         float d = Convert.ToSingle(row["d"]);
 
+                        //שליחה לחישוב תוצאה ע"י אחת מהשיטות
                         //float result = calc.Evaluate(formulaStr,condition,formulaFalse, a, b, c, d);
                         float result = calc.EvaluateNCalc(formulaStr,condition,formulaFalse, a, b, c, d);
 
                         Console.WriteLine($"A:{a:F2} | B:{b:F2} | C:{c:F2} | D:{d:F2} => Result: {result:F2}");
+                        //t_result שמירת התוצאה לטבלת  
                         dbManager.SaveResult(dataId,id,"DotNet",result);
 
 
@@ -65,8 +64,9 @@ namespace DynamicCalculator_DotNet
                     }
 
                     swCalc.Stop();
+                    //חישוב זמן ריצה של הנוסחאות
                     float totalSeconds = (float)swCalc.Elapsed.TotalSeconds;
-
+                    //t_log שמירת התוצאה לטבלת  
                     dbManager.SaveLog(id,"DotNet",totalSeconds);
                     Console.WriteLine($"finished! time : {totalSeconds:F4}");
                 }
